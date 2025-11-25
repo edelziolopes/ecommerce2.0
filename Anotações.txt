@@ -1,0 +1,60 @@
+1 - Editor Sqlite
+https://sqlitebrowser.org/dl/
+
+2 - Rodar Tailwind
+npx @tailwindcss/cli -i ./src/public/assets/css/input.css -o ./src/public/assets/css/output.css --watch
+
+3 - Rodar PHP
+php -S localhost:8080 -t src/public
+
+4 - ADM
+admin@loja.com
+123456
+
+// ************* BANCO ***************
+-- 1. Tabela de Usuários
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    senha TEXT NOT NULL,
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Tabela de Categorias
+CREATE TABLE IF NOT EXISTS categorias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL
+);
+
+-- 3. Tabela de Produtos
+CREATE TABLE IF NOT EXISTS produtos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoria_id INTEGER,
+    nome TEXT NOT NULL,
+    descricao TEXT,
+    preco REAL NOT NULL,
+    imagem TEXT, -- Novo campo: armazena o caminho (ex: 'uploads/mouse.jpg')
+    quantidade_estoque INTEGER DEFAULT 0,
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+);
+
+-- 4. Tabela de Vendas
+CREATE TABLE IF NOT EXISTS vendas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER,
+    total_venda REAL,
+    data_venda DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- 5. Tabela de Itens da Venda
+CREATE TABLE IF NOT EXISTS itens_venda (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    venda_id INTEGER,
+    produto_id INTEGER,
+    quantidade INTEGER NOT NULL,
+    preco_unitario REAL NOT NULL,
+    FOREIGN KEY (venda_id) REFERENCES vendas(id),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);

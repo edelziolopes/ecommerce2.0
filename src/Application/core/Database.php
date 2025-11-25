@@ -7,18 +7,28 @@ use PDOException;
 
 class Database extends PDO
 {
-  private $DB_NAME = '';
-  private $DB_USER = '';
+  // Configurações do MySQL
+  private $DB_NAME = 'nome_do_banco';
+  private $DB_USER = 'root';
   private $DB_PASSWORD = '';
-  private $DB_HOST = '';
-  private $DB_PORT = 3306;
+  private $DB_HOST = 'localhost';
 
   private $conn;
 
   public function __construct()
   {
     try {
-      $this->conn = new PDO("mysql:host=$this->DB_HOST;dbname=$this->DB_NAME", $this->DB_USER, $this->DB_PASSWORD, [PDO::ATTR_PERSISTENT => true]);
+      /*
+      $this->conn = new PDO(
+          "mysql:host=$this->DB_HOST;dbname=$this->DB_NAME",
+          $this->DB_USER,
+          $this->DB_PASSWORD,
+          [PDO::ATTR_PERSISTENT => true]
+      );
+      */
+
+      $dbPath = dirname(__DIR__) . '/sqlite/banco.sqlite';
+      $this->conn = new PDO("sqlite:" . $dbPath);
       $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (PDOException $e) {
       die('Erro de conexão com o banco de dados: ' . $e->getMessage());
@@ -27,7 +37,8 @@ class Database extends PDO
 
   private function setParameters($stmt, $key, $value)
   {
-    $stmt->bindParam($key, $value);
+    // Alterado de bindParam para bindValue para evitar problemas de referência em loops
+    $stmt->bindValue($key, $value);
   }
 
   private function mountQuery($stmt, $parameters)

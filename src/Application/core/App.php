@@ -2,7 +2,6 @@
 
 namespace Application\core;
 
-
 /**
 * Esta classe é responsável por obter da URL o controller, método (ação) e os parâmetros
 * e verificar a existência dos mesmo.
@@ -60,8 +59,12 @@ class App
     }
 
     if (!$this->page404) {
-        require '../Application/controllers/' . $this->controller . '.php';
-        $this->controller = new $this->controller();
+        // CORREÇÃO: Removemos o require manual, pois o Autoloader do index.php já faz isso.
+        // require '../Application/controllers/' . $this->controller . '.php';
+        
+        // Adiciona o namespace completo para instanciar a classe corretamente
+        $classe = 'Application\\controllers\\' . $this->controller;
+        $this->controller = new $classe();
     }
 
   }
@@ -99,4 +102,4 @@ class App
       $this->params = array_slice($url, 2);
     }
   }
-}
+} 
