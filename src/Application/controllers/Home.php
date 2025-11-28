@@ -18,22 +18,24 @@ class Home extends Controller
         $this->view('home/index', $dados);
     }
 
-    public function filtrar($id = null)
+    // --- ROTA DE FILTRO ATUALIZADA ---
+    // Agora aceita POST JSON com múltiplos parâmetros
+    public function filtrar()
     {
-        // --- CORREÇÃO AQUI ---
-        // Limpa (apaga) qualquer HTML que o index.php tenha gerado até agora
-        // garantindo que apenas o JSON seja enviado.
-        ob_clean(); 
-        // ---------------------
+        ob_clean(); // Limpa buffer para garantir JSON puro
+
+        // Lê o corpo da requisição JSON enviado pelo JavaScript
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        $categoria = $data['categoria'] ?? 'todos';
+        $min = $data['min'] ?? null;
+        $max = $data['max'] ?? null;
 
         $produtoModel = $this->model('Produto');
-        $produtos = [];
-
-        if (!$id || $id === 'todos') {
-            $produtos = $produtoModel->listarTodos();
-        } else {
-            $produtos = $produtoModel->listarPorCategoria($id);
-        }
+        
+        // Chama o novo método do Model
+        $produtos = $produtoModel->filtrarAvancado($categoria, $min, $max);
 
         header('Content-Type: application/json');
         echo json_encode($produtos);

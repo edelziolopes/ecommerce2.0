@@ -30,9 +30,6 @@ class Admin extends Controller
     public function produtos()
     {
         $produtoModel = $this->model('Produto');
-        
-        // DICA: O ideal seria ter um método listarTodosSemFiltro() para o admin ver produtos com estoque zero
-        // mas vamos manter o padrão por enquanto.
         $dados = [
             'produtos' => $produtoModel->listarTodos(),
             'categorias' => $produtoModel->listarCategorias()
@@ -49,9 +46,7 @@ class Admin extends Controller
         if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] == 0) {
             $ext = pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION);
             $novoNome = uniqid() . '.' . $ext;
-            
-            // --- CORREÇÃO DO CAMINHO ---
-            // Caminho relativo a partir de public/index.php
+
             $pastaDestino = 'assets/img/';
             
             // Garante que a pasta existe (cria se não existir)

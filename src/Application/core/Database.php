@@ -7,8 +7,7 @@ use PDOException;
 
 class Database extends PDO
 {
-  // Configurações do MySQL
-  private $DB_NAME = 'nome_do_banco';
+  private $DB_NAME = 'nome_do_banco'; 
   private $DB_USER = 'root';
   private $DB_PASSWORD = '';
   private $DB_HOST = 'localhost';
