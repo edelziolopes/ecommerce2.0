@@ -1,4 +1,9 @@
 <?php
+// Ativar exibição de erros
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -15,24 +20,25 @@ if (session_status() === PHP_SESSION_NONE) {
 </head>
 <body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
 
-  <!-- Cabeçalho -->
+  <!-- Cabeçalho Full Width -->
   <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <!-- MUDANÇA: 'container mx-auto' removido. Usado 'w-full' com padding responsivo -->
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      
       <!-- Logo -->
-      <a href="/" class="text-2xl font-bold flex items-center gap-2 hover:text-blue-100 transition">
+      <a href="/" class="text-2xl font-bold flex items-center gap-2 hover:text-blue-100 transition whitespace-nowrap">
          🛒 TechStore
       </a>
       
       <nav class="flex items-center gap-6">
         
-        <!-- Link de Admin (Apenas se ID = 1) -->
         <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == 1): ?>
-            <a href="/admin" class="bg-gray-900 text-white px-3 py-1 rounded text-sm hover:bg-gray-800 transition shadow border border-gray-700 flex items-center gap-1">
+            <a href="/admin" class="hidden md:flex bg-gray-900 text-white px-3 py-1 rounded text-sm hover:bg-gray-800 transition shadow border border-gray-700 items-center gap-1">
                 ⚙️ Admin
             </a>
         <?php endif; ?>
 
-        <a href="/" class="hover:text-blue-200 transition font-medium">Produtos</a>
+        <a href="/" class="hover:text-blue-200 transition font-medium hidden sm:block">Produtos</a>
         
         <!-- Carrinho -->
         <a href="/carrinho" class="hover:text-blue-200 transition flex items-center relative group">
@@ -46,7 +52,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
         <div class="border-l border-blue-400 h-6 mx-2 hidden sm:block"></div>
 
-        <!-- Área do Usuário -->
         <?php if (isset($_SESSION['user_id'])): ?>
             <div class="flex items-center gap-4 relative group">
                 <div class="text-right hidden sm:block">
@@ -54,14 +59,14 @@ if (session_status() === PHP_SESSION_NONE) {
                     <span class="block text-sm font-bold leading-tight"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                 </div>
                 
-                <a href="/auth/logout" class="text-sm bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded transition shadow border border-blue-500">
+                <a href="/auth/logout" class="text-sm bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded transition shadow border border-blue-500 whitespace-nowrap">
                     Sair
                 </a>
             </div>
         <?php else: ?>
             <div class="flex items-center gap-3 text-sm font-semibold">
-                <a href="/auth/login" class="hover:underline text-white">Entrar</a>
-                <a href="/auth/register" class="bg-white text-blue-600 px-4 py-2 rounded shadow hover:bg-gray-100 transition">
+                <a href="/auth/login" class="hover:underline text-white whitespace-nowrap">Entrar</a>
+                <a href="/auth/register" class="hidden sm:block bg-white text-blue-600 px-4 py-2 rounded shadow hover:bg-gray-100 transition whitespace-nowrap">
                     Cadastrar
                 </a>
             </div>
@@ -71,10 +76,13 @@ if (session_status() === PHP_SESSION_NONE) {
     </div>
   </header>
 
-  <!-- Conteúdo Principal -->
-  <main class="container mx-auto px-4 py-8 flex-grow">
+  <!-- Conteúdo Principal Full Width -->
+  <!-- MUDANÇA: 'container mx-auto' removido. Usado 'w-full' com padding responsivo -->
+  <main class="w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow">
       <?php
-        require '../Application/autoload.php';
+        if (file_exists('../Application/autoload.php')) {
+            require '../Application/autoload.php';
+        }
         
         spl_autoload_register(function ($class) {
             $file = '../' . str_replace('\\', '/', $class) . '.php';
@@ -89,9 +97,10 @@ if (session_status() === PHP_SESSION_NONE) {
       ?>
   </main>
 
-  <!-- Rodapé -->
+  <!-- Rodapé Full Width -->
   <footer class="bg-gray-800 text-gray-300 py-8 mt-12">
-    <div class="container mx-auto px-4">
+    <!-- MUDANÇA: 'container mx-auto' removido. -->
+    <div class="w-full px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="mb-4 md:mb-0">
                 <h3 class="text-xl font-bold text-white">TechStore</h3>
