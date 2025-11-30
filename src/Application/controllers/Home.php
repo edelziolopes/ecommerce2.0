@@ -10,9 +10,12 @@ class Home extends Controller
     {
         $produtoModel = $this->model('Produto');
         
+        $adminModel = $this->model('AdminModel');
+
         $dados = [
             'produtos' => $produtoModel->listarTodos(),
-            'categorias' => $produtoModel->listarCategorias()
+            'categorias' => $produtoModel->listarCategorias(),
+            'banners' => $adminModel->listarBannersAtivos()
         ];
 
         $this->view('home/index', $dados);

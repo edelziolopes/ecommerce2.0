@@ -1,14 +1,108 @@
 <div class="mb-8">
     <!-- Banner Promocional -->
-    <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg p-8 mb-10 text-white flex flex-col md:flex-row items-center justify-between">
-        <div>
-            <h2 class="text-4xl font-bold mb-2">Ofertas da Semana!</h2>
-            <p class="text-lg opacity-90">Hardware e periféricos com até 30% de desconto.</p>
+    <?php if (!empty($data['banners'])): ?>
+        <div class="relative rounded-lg shadow-lg mb-10 overflow-hidden h-64 md:h-80 lg:h-96 group">
+            <!-- Carousel Container -->
+            <div id="banner-carousel" class="relative w-full h-full">
+                <?php foreach ($data['banners'] as $index => $banner): ?>
+                    <div class="banner-slide absolute inset-0 transition-opacity duration-1000 ease-in-out <?php echo $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'; ?>" data-index="<?php echo $index; ?>">
+                        <img src="/assets/img/<?php echo $banner['imagem']; ?>" alt="Banner" class="w-full h-full object-cover">
+                        
+                        <?php if (!empty($banner['link'])): ?>
+                            <a href="<?php echo $banner['link']; ?>" class="absolute inset-0 z-20"></a>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Controls -->
+            <?php if (count($data['banners']) > 1): ?>
+                <button onclick="prevSlide()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 z-30 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="nextSlide()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 z-30 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+
+                <!-- Indicators -->
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
+                    <?php foreach ($data['banners'] as $index => $banner): ?>
+                        <button onclick="goToSlide(<?php echo $index; ?>)" class="w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 transition focus:outline-none indicator <?php echo $index === 0 ? 'bg-opacity-100' : ''; ?>" data-index="<?php echo $index; ?>"></button>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
-        <a href="#loja" class="mt-4 md:mt-0 bg-white text-blue-600 font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition">
-            Ver Ofertas
-        </a>
-    </div>
+
+        <script>
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.banner-slide');
+            const indicators = document.querySelectorAll('.indicator');
+            const totalSlides = slides.length;
+            let slideInterval;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    if (i === index) {
+                        slide.classList.remove('opacity-0', 'z-0');
+                        slide.classList.add('opacity-100', 'z-10');
+                    } else {
+                        slide.classList.remove('opacity-100', 'z-10');
+                        slide.classList.add('opacity-0', 'z-0');
+                    }
+                });
+
+                indicators.forEach((indicator, i) => {
+                    if (i === index) {
+                        indicator.classList.remove('bg-opacity-50');
+                        indicator.classList.add('bg-opacity-100');
+                    } else {
+                        indicator.classList.remove('bg-opacity-100');
+                        indicator.classList.add('bg-opacity-50');
+                    }
+                });
+
+                currentSlide = index;
+            }
+
+            function nextSlide() {
+                let next = (currentSlide + 1) % totalSlides;
+                showSlide(next);
+            }
+
+            function prevSlide() {
+                let prev = (currentSlide - 1 + totalSlides) % totalSlides;
+                showSlide(prev);
+            }
+
+            function goToSlide(index) {
+                showSlide(index);
+                resetInterval();
+            }
+
+            function resetInterval() {
+                clearInterval(slideInterval);
+                if (totalSlides > 1) {
+                    slideInterval = setInterval(nextSlide, 5000);
+                }
+            }
+
+            // Auto play
+            if (totalSlides > 1) {
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+        </script>
+    <?php else: ?>
+        <!-- Default Static Banner (Fallback) -->
+        <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg p-8 mb-10 text-white flex flex-col md:flex-row items-center justify-between">
+            <div>
+                <h2 class="text-4xl font-bold mb-2">Ofertas da Semana!</h2>
+                <p class="text-lg opacity-90">Hardware e periféricos com até 30% de desconto.</p>
+            </div>
+            <a href="#loja" class="mt-4 md:mt-0 bg-white text-blue-600 font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition">
+                Ver Ofertas
+            </a>
+        </div>
+    <?php endif; ?>
 
     <!-- Layout Principal: Grid com Sidebar e Conteúdo -->
     <div id="loja" class="flex flex-col lg:flex-row gap-8">

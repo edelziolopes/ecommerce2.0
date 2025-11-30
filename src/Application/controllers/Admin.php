@@ -109,4 +109,45 @@ class Admin extends Controller
              echo "Erro: " . $e->getMessage();
         }
     }
+    // --- BANNERS ---
+    public function banners()
+    {
+        $banners = $this->adminModel->listarBanners();
+        $this->view('admin/banners', ['banners' => $banners]);
+    }
+
+    public function salvar_banner()
+    {
+        $dados = $_POST;
+        $dados['imagem'] = '';
+
+        if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] == 0) {
+            $ext = pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION);
+            $novoNome = uniqid() . '.' . $ext;
+            $pastaDestino = 'assets/img/banners/';
+            
+            if (!is_dir($pastaDestino)) {
+                mkdir($pastaDestino, 0777, true);
+            }
+
+            if (move_uploaded_file($_FILES['imagem']['tmp_name'], $pastaDestino . $novoNome)) {
+                $dados['imagem'] = 'banners/' . $novoNome;
+            }
+        }
+
+        $this->adminModel->salvarBanner($dados);
+        $this->redirect('admin/banners');
+    }
+
+    public function deletar_banner($id)
+    {
+        $this->adminModel->deletarBanner($id);
+        $this->redirect('admin/banners');
+    }
+
+    public function toggle_banner($id)
+    {
+        $this->adminModel->toggleBannerStatus($id);
+        $this->redirect('admin/banners');
+    }
 }

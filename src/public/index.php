@@ -53,15 +53,31 @@ if (session_status() === PHP_SESSION_NONE) {
         <div class="border-l border-blue-400 h-6 mx-2 hidden sm:block"></div>
 
         <?php if (isset($_SESSION['user_id'])): ?>
-            <div class="flex items-center gap-4 relative group">
-                <div class="text-right hidden sm:block">
-                    <span class="block text-xs text-blue-200">Bem-vindo,</span>
-                    <span class="block text-sm font-bold leading-tight"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+            <div class="relative">
+                <button id="user-menu-button" onclick="toggleUserMenu()" class="flex items-center gap-3 focus:outline-none">
+                    <div class="text-right hidden sm:block">
+                        <span class="block text-xs text-blue-200">Bem-vindo,</span>
+                        <span class="block text-sm font-bold leading-tight"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                    </div>
+                    <div class="h-8 w-8 rounded-full bg-blue-800 flex items-center justify-center text-sm font-bold border-2 border-blue-400">
+                        <?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
+                    </div>
+                    <svg class="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden border border-gray-100">
+                    <div class="px-4 py-2 border-b border-gray-100 sm:hidden">
+                        <p class="text-xs text-gray-500">Logado como</p>
+                        <p class="text-sm font-bold text-gray-900 truncate"><?php echo htmlspecialchars($_SESSION['user_name']); ?></p>
+                    </div>
+                    <a href="/dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
+                        🛍️ Minhas Compras
+                    </a>
+                    <a href="/auth/logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+                        🚪 Sair
+                    </a>
                 </div>
-                
-                <a href="/auth/logout" class="text-sm bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded transition shadow border border-blue-500 whitespace-nowrap">
-                    Sair
-                </a>
             </div>
         <?php else: ?>
             <div class="flex items-center gap-3 text-sm font-semibold">
@@ -112,6 +128,22 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
     </div>
   </footer>
+
+  <script>
+    function toggleUserMenu() {
+        const menu = document.getElementById('user-menu-dropdown');
+        menu.classList.toggle('hidden');
+    }
+
+    // Close on click outside
+    window.addEventListener('click', function(e) {
+        const button = document.getElementById('user-menu-button');
+        const menu = document.getElementById('user-menu-dropdown');
+        if (button && menu && !button.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+  </script>
 
 </body>
 </html>

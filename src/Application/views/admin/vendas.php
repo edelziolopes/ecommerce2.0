@@ -6,6 +6,7 @@
             <a href="/admin/produtos" class="block py-2 px-4 hover:bg-gray-700 rounded text-gray-300">Produtos</a>
             <a href="/admin/categorias" class="block py-2 px-4 hover:bg-gray-700 rounded text-gray-300">Categorias</a>
             <a href="/admin/vendas" class="block py-2 px-4 bg-gray-700 rounded text-white">Vendas</a>
+            <a href="/admin/banners" class="block py-2 px-4 bg-gray-700 rounded text-white">Banners</a>
             <a href="/" class="block py-2 px-4 mt-8 bg-blue-600 hover:bg-blue-700 rounded text-center">Ir para Loja</a>
         </nav>
     </aside>

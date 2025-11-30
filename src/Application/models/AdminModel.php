@@ -111,4 +111,59 @@ class AdminModel
                 WHERE iv.venda_id = :id";
         return $this->db->executeQuery($sql, ['id' => $vendaId])->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // --- BANNERS ---
+    public function listarBanners()
+    {
+        return $this->db->executeQuery("SELECT * FROM banners ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listarBannersAtivos()
+    {
+        // Status é BLOB/Texto, então comparamos com string '1'
+        return $this->db->executeQuery("SELECT * FROM banners WHERE status = '1' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function salvarBanner($dados)
+    {
+        if (empty($dados['id'])) {
+            $sql = "INSERT INTO banners (imagem, link, status) VALUES (:img, :link, :status)";
+            $params = [
+                'img' => $dados['imagem'],
+                'link' => $dados['link'],
+                'status' => isset($dados['status']) ? 1 : 0
+            ];
+        } else {
+            $sql = "UPDATE banners SET link = :link, status = :status";
+            $params = [
+                'link' => $dados['link'],
+                'status' => isset($dados['status']) ? 1 : 0,
+                'id' => $dados['id']
+            ];
+
+            if (!empty($dados['imagem'])) {
+                $sql .= ", imagem = :img";
+                $params['img'] = $dados['imagem'];
+            }
+
+            $sql .= " WHERE id = :id";
+        }
+
+        return $this->db->executeQuery($sql, $params);
+    }
+
+    public function deletarBanner($id)
+    {
+        return $this->db->executeQuery("DELETE FROM banners WHERE id = :id", ['id' => $id]);
+    }
+
+    public function toggleBannerStatus($id)
+    {
+        // Pega o status atual
+        $banner = $this->db->executeQuery("SELECT status FROM banners WHERE id = :id", ['id' => $id])->fetch(PDO::FETCH_ASSOC);
+        if ($banner) {
+            $novoStatus = $banner['status'] ? 0 : 1;
+            $this->db->executeQuery("UPDATE banners SET status = :status WHERE id = :id", ['status' => $novoStatus, 'id' => $id]);
+        }
+    }
 }
